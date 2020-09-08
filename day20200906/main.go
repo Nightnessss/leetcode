@@ -50,14 +50,14 @@ func main() {
 }
 
 func levelOrderBottom(root *TreeNode) [][]int {
-	levelOrder := [][]int{}
+	var levelOrder [][]int
 	if root == nil {
 		return levelOrder
 	}
-	queue := []*TreeNode{}
+	var queue []*TreeNode
 	queue = append(queue, root)
 	for len(queue) > 0 {
-		level := []int{}
+		var level []int
 		size := len(queue)
 		for i := 0; i < size; i++ {
 			node := queue[0]
@@ -99,14 +99,12 @@ func (t *TreeNode) readTree(list []string, dep int) int {
 		if dep > len(list)-1 {
 			return dep
 		}
-		if len(list[dep]) == 0 {
-			return dep
+		if len(list[dep]) != 0 {
+			val, _ := strconv.Atoi(list[dep])
+			t.Right = &TreeNode{
+				Val: val,
+			}
 		}
-		val, _ := strconv.Atoi(list[dep])
-		t.Right = &TreeNode{
-			Val: val,
-		}
-
 	}
 
 	dep = t.Left.readTree(list, dep)
