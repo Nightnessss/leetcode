@@ -52,43 +52,32 @@ func main() {
 	fmt.Print(res)
 }
 
-//
-//type A struct {
-//	res    [][]int
-//	target int
-//}
+type A struct {
+	res [][]int
+}
 
 func combinationSum(candidates []int, target int) [][]int {
 	sort.Ints(candidates)
 	var h []int
-	var res [][]int
-	_, res = get(0, candidates, target, h, res)
-	return res
+	a := &A{}
+	a.get(candidates, target, h)
+	return a.res
 }
 
-func get(sum int, arr []int, target int, h []int, res [][]int) ([]int, [][]int) {
-	if sum == target {
-		res = append(res, h)
-		h = []int{}
-		return h, res
-	}
-	if sum > target {
-		h = []int{}
-		return h, res
-	}
+func (a *A) get(arr []int, target int, h []int) {
+
 	for i := len(arr) - 1; i >= 0; i-- {
 
-		if sum+arr[i] > target {
+		if arr[i] > target {
 			continue
 		}
-		if sum+arr[i] == target {
-			res = append(res, append(h, arr[i]))
-			continue
-		}
-		if sum+arr[i] < target {
+		if arr[i] == target {
 			tmp := append(h, arr[i])
-			_, res = get(sum+arr[i], arr[:i+1], target, tmp, res)
+			a.res = append(a.res, tmp)
+			continue
 		}
+		tmp := make([]int, len(h))
+		copy(tmp, h)
+		a.get(arr[:i+1], target-arr[i], append(tmp, arr[i]))
 	}
-	return h, res
 }
