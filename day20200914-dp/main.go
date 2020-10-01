@@ -32,46 +32,60 @@ import "fmt"
 */
 
 func main() {
-	array := []string{"10", "0001", "111001", "1", "0"}
-	m := 5
-	n := 3
+	//array := []string{"10", "0001", "111001", "1", "0"}
+	array := []string{"0", "11", "1000", "01", "0", "101", "1", "1", "1", "0", "0", "0", "0", "1", "0", "0110101", "0", "11", "01", "00", "01111", "0011", "1", "1000", "0", "11101", "1", "0", "10", "0111"}
+	//array := []string{"10", "1", "0"}
+	m := 9
+	n := 80
 	res := findMaxForm(array, m, n)
 	fmt.Print(res)
 }
 
-var dp func(m int, n int) (res int)
-
 func findMaxForm(strs []string, m int, n int) int {
-	az := make([]int, len(strs))
-	ao := make([]int, len(strs))
-	for k, v := range strs {
-		azCount := 0
-		aoCount := 0
-		for _, b := range v {
-			if b == '0' {
-				azCount++
-			} else if b == '1' {
-				aoCount++
+
+	dp := make([][][]int, len(strs)+1)
+	for k := 0; k <= len(strs); k++ {
+		dp[k] = make([][]int, m+1)
+		for i := 0; i < m+1; i++ {
+			dp[k][i] = make([]int, n+1)
+		}
+	}
+
+	for i := 0; i < len(strs); i++ {
+		dp[i][0][0] = 0
+
+	}
+	for k, c := range strs {
+		cnt := count(c)
+		fmt.Print(c + " ")
+		fmt.Println(k, cnt[0], cnt[1])
+		for i := 0; i <= m; i++ {
+			for j := 0; j <= n; j++ {
+				dp[k+1][i][j] = dp[k][i][j]
+				if i >= cnt[0] && j >= cnt[1] {
+					dp[k+1][i][j] = max(dp[k][i][j], dp[k][i-cnt[0]][j-cnt[1]]+1)
+				}
 			}
 		}
-		az[k] = azCount
-		ao[k] = aoCount
+
 	}
-	i := 0
-	dp = func(m int, n int) (res int) {
-		res = 0
-		if m >= az[i] && n >= ao[i] {
-			res = max(1+dp(m-az[i], m-az[i]), dp(m, n))
-		}
-		return res
+
+	return dp[len(strs)][m][n]
+}
+func max(a, b int) int {
+	if a > b {
+		return a
 	}
-	res := dp(m, n)
-	return res
+	return b
 }
 
-func max(x int, y int) (max int) {
-	if x > y {
-		return x
+func count(str string) (res [2]int) {
+	for _, c := range str {
+		if c == '0' {
+			res[0]++
+			continue
+		}
+		res[1]++
 	}
-	return y
+	return res
 }
